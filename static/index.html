@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARINEGUARD AI — Maritime Incident Intelligence System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/leaflet.css?v=3.5" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';">
+  <link rel="stylesheet" href="/static/css/style.css?v=3.5">
+</head>
+<body>
+<div class="app-shell">
+  
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-title">🛡️ MARINEGUARD AI</div>
+      <div class="logo-subtitle">Maritime Incident Intelligence System</div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="active" data-tab="dashboard">🧭 Dashboard</li>
+      <li data-tab="dashboard" onclick="if(window.MapModule&&window.MapModule.map)setTimeout(()=>MapModule.map.invalidateSize(),100)">🗺️ Live Map</li>
+      <li data-tab="vessels">🚢 AIS Fleet</li>
+      <li data-tab="incidents">📊 Incidents</li>
+      <li data-tab="anomaly">🤖 Anomaly Detection</li>
+      <li data-tab="alerts">🚨 Alerts</li>
+      <li data-tab="reports">📄 Reports</li>
+    </ul>
+    
+    <div class="status-section">
+      <h4>System Status</h4>
+      <div class="status-item"><span>AIS Stream</span> <span class="dot green"></span></div>
+      <div class="status-item"><span>Satellite Feed</span> <span class="dot green"></span></div>
+      <div class="status-item"><span>AI Models</span> <span class="dot green"></span></div>
+      <div class="status-item"><span>Database</span> <span class="dot green"></span></div>
+    </div>
+    
+    <div class="data-sources">
+      <h4>Data Sources</h4>
+      <div class="data-item"><span>AIS Vessels:</span> <span>12,842</span></div>
+      <div class="data-item"><span>Sat Scenes:</span> <span>186</span></div>
+      <div class="data-item"><span>Coverage Area:</span> <span>2.3M km²</span></div>
+      <div class="data-item"><span>Last Updated:</span> <span>1 min ago</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="main-content">
+    
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <div class="stats-ticker">
+        <div class="stat-chip">Active Incidents: <span>03</span></div>
+        <div class="stat-chip">High Risk Vessels: <span>07</span></div>
+        <div class="stat-chip">Oil Spills Detected: <span>05</span></div>
+        <div class="stat-chip">Area Affected: <span>12.48 km²</span></div>
+      </div>
+      <div class="header-right">
+        <div class="datetime" id="live-datetime">Loading UTC...</div>
+        <div style="cursor:pointer" onclick="app.switchTab('alerts')" title="Active Alerts">🔔 <span style="background:var(--accent-crimson);color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;font-weight:700;">3</span></div>
+        <div style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">👤 Officer In-Charge</div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      
+      <!-- TAB: DASHBOARD / LIVE MAP -->
+      <div id="tab-dashboard" class="tab-content active">
+        <div class="dashboard-layout">
+          
+          <!-- Interactive Map Container -->
+          <div class="map-section">
+            <div class="map-tabs">
+              <button class="map-tab active" id="btn-live-map">📡 Live Map</button>
+              <button class="map-tab" id="btn-satellite">🛰️ Satellite View</button>
+              <div style="width:1px;height:16px;background:rgba(255,255,255,0.15);margin:0 4px;"></div>
+              <div class="map-layer-toggles" style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-secondary);padding:0 6px;">
+                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-vessels" checked> Vessels</label>
+                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-spills" checked> Oil Spills</label>
+                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-weather" checked> Weather</label>
+                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-coastline" checked> Coastline</label>
+                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-ports" checked> Ports</label>
+              </div>
+            </div>
+            
+            <div id="leaflet-map"></div>
+            
+            <!-- Bottom Analytical Telemetry Row -->
+            <div class="bottom-row">
+              <div class="card timeline-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <h3>Oil Spill Detection Timeline</h3>
+                  <div style="font-size:10px;color:var(--accent-cyan);display:flex;align-items:center;gap:4px;">
+                    <span style="width:12px;height:2px;background:var(--accent-cyan);display:inline-block;"></span> Confidence Score
+                  </div>
+                </div>
+                <canvas id="timeline-canvas" width="600" height="130"></canvas>
+              </div>
+
+              <div class="card stat-card">
+                <h3>Vessel Anomaly Overview</h3>
+                <div class="donut-wrapper">
+                  <canvas id="anomaly-donut" width="120" height="120"></canvas>
+                  <div class="donut-center">128<br><span>Vessels</span></div>
+                </div>
+                <div class="legend">
+                  <span class="dot red"></span> High 17 (13%) &nbsp;
+                  <span class="dot amber"></span> Med 35 (27%) &nbsp;
+                  <span class="dot green"></span> Low 76 (60%)
+                </div>
+              </div>
+
+              <div class="card stat-card">
+                <h3>Oil Spill Statistics (This Month)</h3>
+                <div class="spill-stats">
+                  <div>🔥 Total Spills: <b>05</b></div>
+                  <div>⚠️ Total Area: <b>12.48 km²</b></div>
+                  <div>Avg. Confidence: <b>85%</b></div>
+                  <div>False Alarms: <b>02</b></div>
+                </div>
+              </div>
+
+              <div class="card stat-card">
+                <h3>Risk Level Distribution</h3>
+                <div class="donut-wrapper">
+                  <canvas id="risk-donut" width="120" height="120"></canvas>
+                  <div class="donut-center">68<br><span>Vessels</span></div>
+                </div>
+                <div class="legend">
+                  <span class="dot red"></span> High 7 (10%) &nbsp;
+                  <span class="dot amber"></span> Med 21 (31%) &nbsp;
+                  <span class="dot green"></span> Low 40 (59%)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Incident Intelligence Panel -->
+          <aside class="incident-panel">
+            <div class="panel-header">
+              <h2>Incident: #INC-2025-05-20-01</h2>
+              <button class="close-btn" onclick="IncidentModule.closeIncident('INC-2025-05-20-01')">&times;</button>
+            </div>
+            <div class="panel-tabs">
+              <button class="panel-tab active">Overview</button>
+              <button class="panel-tab" onclick="app.switchTab('vessels')">Vessels (4)</button>
+              <button class="panel-tab" onclick="document.getElementById('btn-satellite').click()">Satellite</button>
+              <button class="panel-tab" onclick="app.switchTab('reports')">Timeline</button>
+              <button class="panel-tab" onclick="app.switchTab('alerts')">Actions</button>
+            </div>
+            <div class="panel-content">
+              <!-- Dynamically populated by incidents.js -->
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- TAB: AIS FLEET MONITOR -->
+      <div id="tab-vessels" class="tab-content">
+        <div class="page-header">
+          <h2>🚢 AIS Fleet Monitor</h2>
+          <button onclick="AISModule.uploadPrompt()" class="btn-primary btn" style="width:auto;">Upload AIS Feed (CSV)</button>
+        </div>
+        <div class="card">
+          <table class="fleet-table" id="fleet-table">
+            <thead>
+              <tr>
+                <th>MMSI</th><th>Vessel Name</th><th>Type</th><th>Flag</th>
+                <th>Speed</th><th>Heading</th><th>Status</th><th>Anomaly Score</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: ANOMALY DETECTION -->
+      <div id="tab-anomaly" class="tab-content">
+        <div class="page-header">
+          <h2>🤖 Anomaly Detection Engine</h2>
+          <button onclick="AnomalyModule.runAnalysis()" class="btn-primary btn" style="width:auto;">Run Full Fleet Analysis</button>
+        </div>
+        <div class="anomaly-layout">
+          <div class="card anomaly-list" id="anomaly-fleet-list"></div>
+          <div class="card anomaly-detail" id="anomaly-vessel-detail"><p style="color:var(--text-muted);padding:20px">Select a vessel to view detailed anomaly breakdown.</p></div>
+        </div>
+      </div>
+
+      <!-- TAB: INCIDENTS -->
+      <div id="tab-incidents" class="tab-content">
+        <div class="page-header"><h2>📊 Incident Management</h2></div>
+        <div id="incidents-grid" class="incidents-grid"></div>
+      </div>
+
+      <!-- TAB: ALERTS & RESPONSE -->
+      <div id="tab-alerts" class="tab-content">
+        <div class="page-header"><h2>🚨 Maritime Alerts & Emergency Response</h2></div>
+        <div id="alerts-container">
+          <div style="background:var(--bg-card);border-radius:8px;padding:16px;border:1px solid var(--border-subtle);margin-bottom:12px;border-left:4px solid var(--accent-crimson);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <b style="color:var(--accent-crimson);">ALERT #ALT-9042: High Confidence Oil Spill Attribution</b>
+              <span class="badge high">IMMEDIATE ACTION</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Vessel MT SHIVALIK (MMSI 419001234) spatiotemporally correlated (91% confidence) with confirmed 4.8 km² crude spill in Sector Bay of Bengal.</p>
+            <div style="margin-top:10px;display:flex;gap:10px;">
+              <button class="btn btn-primary" onclick="app.showNotification('Dispatched alert to Indian Coast Guard HQ', 'success')" style="width:auto;padding:6px 14px;">Dispatch Coast Guard Interceptor</button>
+              <button class="btn btn-outline" onclick="ReportModule.generateReport('INC-2025-05-20-01')" style="width:auto;padding:6px 14px;">View Evidence Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: REPORTS -->
+      <div id="tab-reports" class="tab-content">
+        <div class="page-header"><h2>📄 Formal Incident Investigation Reports</h2></div>
+        <div id="reports-list">
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <b style="font-size:14px;color:#fff;">Incident #INC-2025-05-20-01: Bay of Bengal Crude Spill</b><br>
+                <span style="font-size:11px;color:var(--text-muted);">Attributed Source: MT SHIVALIK (91%) &nbsp;|&nbsp; Affected Area: 4.8 km² &nbsp;|&nbsp; Bonn Code 3</span>
+              </div>
+              <button class="btn btn-primary" onclick="ReportModule.generateReport('INC-2025-05-20-01')" style="width:auto;padding:8px 18px;">Generate Investigation Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Local Leaflet with CDN Fallback -->
+<script src="/static/js/leaflet.js?v=3.5"></script>
+<script>
+  if (typeof L === 'undefined') {
+    document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+  }
+</script>
+<script src="/static/js/map.js?v=3.5"></script>
+<script src="/static/js/ais.js?v=3.5"></script>
+<script src="/static/js/anomaly.js?v=3.5"></script>
+<script src="/static/js/incidents.js?v=3.5"></script>
+<script src="/static/js/report.js?v=3.5"></script>
+<script src="/static/js/app.js?v=3.5"></script>
+</body>
+</html>
