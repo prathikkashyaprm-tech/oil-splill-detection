@@ -1,0 +1,140 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "demo_gulf_of_mexico",
+      "name": "NOAA Gulf of Mexico Tanker Discharge Incident",
+      "region": "Gulf of Mexico (Mississippi Canyon Block)",
+      "spill_location": {"lat": 28.7350, "lon": -88.3820},
+      "detection_time": "2026-08-14T06:45:00Z",
+      "vessels": [
+        {
+          "mmsi": "356891000",
+          "vessel_name": "MT PACIFIC GLORY",
+          "vessel_type": "Crude Oil Tanker",
+          "flag": "Panama",
+          "length_m": 274.0,
+          "width_m": 48.0,
+          "draft_m": 16.5,
+          "destination": "LOOP Terminal",
+          "positions": [
+            {"timestamp": "2026-08-14T04:00:00Z", "lat": 28.6100, "lon": -88.5200, "sog_knots": 14.2, "cog_deg": 48.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T04:30:00Z", "lat": 28.6750, "lon": -88.4450, "sog_knots": 13.8, "cog_deg": 50.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T05:00:00Z", "lat": 28.7280, "lon": -88.3890, "sog_knots": 4.1, "cog_deg": 85.0, "nav_status": "Drifting / Abnormal Deceleration"},
+            {"timestamp": "2026-08-14T05:30:00Z", "lat": 28.7340, "lon": -88.3810, "sog_knots": 1.8, "cog_deg": 110.0, "nav_status": "Restricted Maneuverability"},
+            {"timestamp": "2026-08-14T06:00:00Z", "lat": 28.7410, "lon": -88.3750, "sog_knots": 8.5, "cog_deg": 42.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T06:30:00Z", "lat": 28.7900, "lon": -88.3100, "sog_knots": 14.0, "cog_deg": 45.0, "nav_status": "Underway using Engine"}
+          ],
+          "simulated_features": {
+            "min_distance_km": 0.45,
+            "time_in_spill_zone_min": 42.0,
+            "route_deviation_deg": 62.0,
+            "speed_anomaly_drop_knots": 12.4,
+            "unusual_stops_count": 1,
+            "historical_spill_incidents": 1
+          }
+        },
+        {
+          "mmsi": "228394000",
+          "vessel_name": "CMA CGM FORTUNATO",
+          "vessel_type": "Container Ship",
+          "flag": "France",
+          "length_m": 334.0,
+          "width_m": 42.0,
+          "draft_m": 12.2,
+          "destination": "Houston Port",
+          "positions": [
+            {"timestamp": "2026-08-14T04:00:00Z", "lat": 28.8500, "lon": -88.6000, "sog_knots": 18.5, "cog_deg": 260.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T05:00:00Z", "lat": 28.8200, "lon": -88.4200, "sog_knots": 18.4, "cog_deg": 258.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T06:00:00Z", "lat": 28.7950, "lon": -88.2400, "sog_knots": 18.2, "cog_deg": 260.0, "nav_status": "Underway using Engine"}
+          ],
+          "simulated_features": {
+            "min_distance_km": 8.2,
+            "time_in_spill_zone_min": 0.0,
+            "route_deviation_deg": 2.0,
+            "speed_anomaly_drop_knots": 0.3,
+            "unusual_stops_count": 0,
+            "historical_spill_incidents": 0
+          }
+        },
+        {
+          "mmsi": "636019500",
+          "vessel_name": "STENA BULK DISCOVERY",
+          "vessel_type": "Chemical Tanker",
+          "flag": "Liberia",
+          "length_m": 183.0,
+          "width_m": 32.2,
+          "draft_m": 10.8,
+          "destination": "New Orleans",
+          "positions": [
+            {"timestamp": "2026-08-14T04:15:00Z", "lat": 28.6000, "lon": -88.2000, "sog_knots": 12.0, "cog_deg": 315.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T05:15:00Z", "lat": 28.6900, "lon": -88.2900, "sog_knots": 11.8, "cog_deg": 315.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-14T06:15:00Z", "lat": 28.7800, "lon": -88.3900, "sog_knots": 12.1, "cog_deg": 314.0, "nav_status": "Underway using Engine"}
+          ],
+          "simulated_features": {
+            "min_distance_km": 4.1,
+            "time_in_spill_zone_min": 8.0,
+            "route_deviation_deg": 1.0,
+            "speed_anomaly_drop_knots": 0.2,
+            "unusual_stops_count": 0,
+            "historical_spill_incidents": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "demo_mumbai_high",
+      "name": "Sentinel-1 Arabian Sea / Mumbai High Offshore Spill",
+      "region": "Arabian Sea (Mumbai Offshore Oil Field)",
+      "spill_location": {"lat": 19.4200, "lon": 71.3300},
+      "detection_time": "2026-08-20T14:10:00Z",
+      "vessels": [
+        {
+          "mmsi": "419001234",
+          "vessel_name": "MT SWARNA SINDHU",
+          "vessel_type": "Crude Oil Tanker",
+          "flag": "India",
+          "length_m": 248.0,
+          "width_m": 42.0,
+          "draft_m": 14.8,
+          "destination": "Jawaharlal Nehru Port",
+          "positions": [
+            {"timestamp": "2026-08-20T11:00:00Z", "lat": 19.2800, "lon": 71.1500, "sog_knots": 13.5, "cog_deg": 65.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-20T12:00:00Z", "lat": 19.3800, "lon": 71.2800, "sog_knots": 3.2, "cog_deg": 130.0, "nav_status": "Loitering / Drifting"},
+            {"timestamp": "2026-08-20T13:00:00Z", "lat": 19.4180, "lon": 71.3280, "sog_knots": 1.5, "cog_deg": 170.0, "nav_status": "Not Under Command"},
+            {"timestamp": "2026-08-20T14:00:00Z", "lat": 19.4600, "lon": 71.4000, "sog_knots": 11.2, "cog_deg": 55.0, "nav_status": "Underway using Engine"}
+          ],
+          "simulated_features": {
+            "min_distance_km": 0.35,
+            "time_in_spill_zone_min": 55.0,
+            "route_deviation_deg": 75.0,
+            "speed_anomaly_drop_knots": 12.0,
+            "unusual_stops_count": 1,
+            "historical_spill_incidents": 0
+          }
+        },
+        {
+          "mmsi": "538007890",
+          "vessel_name": "ARABIAN SEAS SUPPLY 4",
+          "vessel_type": "Offshore Supply Vessel",
+          "flag": "Marshall Islands",
+          "length_m": 72.0,
+          "width_m": 16.0,
+          "draft_m": 5.4,
+          "destination": "Rig Platform B-173",
+          "positions": [
+            {"timestamp": "2026-08-20T12:00:00Z", "lat": 19.4000, "lon": 71.2500, "sog_knots": 10.0, "cog_deg": 80.0, "nav_status": "Underway using Engine"},
+            {"timestamp": "2026-08-20T13:30:00Z", "lat": 19.4500, "lon": 71.3800, "sog_knots": 9.8, "cog_deg": 80.0, "nav_status": "Underway using Engine"}
+          ],
+          "simulated_features": {
+            "min_distance_km": 3.8,
+            "time_in_spill_zone_min": 12.0,
+            "route_deviation_deg": 0.0,
+            "speed_anomaly_drop_knots": 0.2,
+            "unusual_stops_count": 0,
+            "historical_spill_incidents": 0
+          }
+        }
+      ]
+    }
+  ]
+}

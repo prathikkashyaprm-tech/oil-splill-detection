@@ -1,0 +1,12 @@
+{
+  "sample_id": "sentinel1_red_sea_01_029",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "oil_spill",
+  "latitude": 22.234841302368125,
+  "longitude": 38.36602995258242,
+  "estimated_area_km2": 24.8,
+  "wind_speed_ms": 6.0,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": true
+}

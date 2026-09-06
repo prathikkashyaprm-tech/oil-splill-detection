@@ -3,246 +3,475 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MARINEGUARD AI — Maritime Incident Intelligence System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/leaflet.css?v=3.5" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';">
-  <link rel="stylesheet" href="/static/css/style.css?v=3.5">
-</head>
-<body>
-<div class="app-shell">
+  <title>MarineGuard AI | Maritime Oil Spill Intelligence & Ecological Platform</title>
   
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo-area">
-      <div class="logo-title">🛡️ MARINEGUARD AI</div>
-      <div class="logo-subtitle">Maritime Incident Intelligence System</div>
-    </div>
-    
-    <ul class="nav-menu">
-      <li class="active" data-tab="dashboard">🧭 Dashboard</li>
-      <li data-tab="dashboard" onclick="if(window.MapModule&&window.MapModule.map)setTimeout(()=>MapModule.map.invalidateSize(),100)">🗺️ Live Map</li>
-      <li data-tab="vessels">🚢 AIS Fleet</li>
-      <li data-tab="incidents">📊 Incidents</li>
-      <li data-tab="anomaly">🤖 Anomaly Detection</li>
-      <li data-tab="alerts">🚨 Alerts</li>
-      <li data-tab="reports">📄 Reports</li>
-    </ul>
-    
-    <div class="status-section">
-      <h4>System Status</h4>
-      <div class="status-item"><span>AIS Stream</span> <span class="dot green"></span></div>
-      <div class="status-item"><span>Satellite Feed</span> <span class="dot green"></span></div>
-      <div class="status-item"><span>AI Models</span> <span class="dot green"></span></div>
-      <div class="status-item"><span>Database</span> <span class="dot green"></span></div>
-    </div>
-    
-    <div class="data-sources">
-      <h4>Data Sources</h4>
-      <div class="data-item"><span>AIS Vessels:</span> <span>12,842</span></div>
-      <div class="data-item"><span>Sat Scenes:</span> <span>186</span></div>
-      <div class="data-item"><span>Coverage Area:</span> <span>2.3M km²</span></div>
-      <div class="data-item"><span>Last Updated:</span> <span>1 min ago</span></div>
-    </div>
-  </aside>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- MAIN VIEWPORT -->
-  <div class="main-content">
-    
-    <!-- TOP HEADER -->
-    <header class="top-header">
-      <div class="stats-ticker">
-        <div class="stat-chip">Active Incidents: <span>03</span></div>
-        <div class="stat-chip">High Risk Vessels: <span>07</span></div>
-        <div class="stat-chip">Oil Spills Detected: <span>05</span></div>
-        <div class="stat-chip">Area Affected: <span>12.48 km²</span></div>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-container">
+        <div class="radar-pulse"></div>
+        <i class="fa-solid fa-shield-halved logo-icon"></i>
+        <div class="logo-text">
+          <h1>MarineGuard <span class="accent-cyan">AI</span></h1>
+          <span class="badge-sih">SIH 2026 | PS-1655</span>
+        </div>
       </div>
-      <div class="header-right">
-        <div class="datetime" id="live-datetime">Loading UTC...</div>
-        <div style="cursor:pointer" onclick="app.switchTab('alerts')" title="Active Alerts">🔔 <span style="background:var(--accent-crimson);color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;font-weight:700;">3</span></div>
-        <div style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">👤 Officer In-Charge</div>
+      <div class="status-indicator">
+        <span class="pulse-dot"></span>
+        <span class="status-label">SAR SATELLITE CONSTELLATION: <strong class="text-success">ONLINE (SENTINEL-1 / NOAA)</strong></span>
       </div>
-    </header>
+    </div>
 
-    <div class="content-area">
+    <!-- Quick Scenario Switcher & Live UTC Clock -->
+    <div class="header-right">
+      <div class="demo-selector-wrapper">
+        <i class="fa-solid fa-satellite-dish text-cyan"></i>
+        <label for="scenarioSelect">DEMO SCENARIO:</label>
+        <select id="scenarioSelect" class="cyber-select" onchange="onScenarioChange(this.value)">
+          <option value="demo_gulf_of_mexico" selected>NOAA Gulf of Mexico (Tanker Anomaly)</option>
+          <option value="demo_mumbai_high">Sentinel-1 Arabian Sea / Mumbai High</option>
+        </select>
+      </div>
+      <div class="system-clock" id="liveClock">2026-08-14 06:45:00 UTC</div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="app-layout">
+    <!-- Collapsible Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-tab="dashboard-view">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-tab="map-view">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Live GIS Map</span>
+        </button>
+        <button class="nav-btn" data-tab="detection-view">
+          <i class="fa-solid fa-satellite"></i>
+          <span>SAR Spill Detection</span>
+        </button>
+        <button class="nav-btn" data-tab="vessels-view">
+          <i class="fa-solid fa-ship"></i>
+          <span>Vessel Attribution</span>
+        </button>
+        <button class="nav-btn" data-tab="trajectory-view">
+          <i class="fa-solid fa-wind"></i>
+          <span>Drift Forecast</span>
+        </button>
+        <button class="nav-btn" data-tab="ecological-view">
+          <i class="fa-solid fa-seedling"></i>
+          <span>Ecological Impact</span>
+        </button>
+        <button class="nav-btn" data-tab="climate-view">
+          <i class="fa-solid fa-temperature-arrow-up"></i>
+          <span>Climate Analytics</span>
+        </button>
+        <button class="nav-btn" data-tab="risk-view">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Pre-Incident Risk</span>
+        </button>
+        <button class="nav-btn" data-tab="dossier-view">
+          <i class="fa-solid fa-file-shield"></i>
+          <span>Evidence Fusion</span>
+        </button>
+        <button class="nav-btn" data-tab="reports-view">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>IMO Incident Report</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="disclaimer-chip">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Ethical AI Directive: Candidate rankings signify <strong>Investigation Priority</strong>, not legal guilt.</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="app-main">
       
-      <!-- TAB: DASHBOARD / LIVE MAP -->
-      <div id="tab-dashboard" class="tab-content active">
-        <div class="dashboard-layout">
-          
-          <!-- Interactive Map Container -->
-          <div class="map-section">
-            <div class="map-tabs">
-              <button class="map-tab active" id="btn-live-map">📡 Live Map</button>
-              <button class="map-tab" id="btn-satellite">🛰️ Satellite View</button>
-              <div style="width:1px;height:16px;background:rgba(255,255,255,0.15);margin:0 4px;"></div>
-              <div class="map-layer-toggles" style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-secondary);padding:0 6px;">
-                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-vessels" checked> Vessels</label>
-                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-spills" checked> Oil Spills</label>
-                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-weather" checked> Weather</label>
-                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-coastline" checked> Coastline</label>
-                <label style="cursor:pointer;display:flex;align-items:center;gap:3px;"><input type="checkbox" id="layer-ports" checked> Ports</label>
+      <!-- Top Metrics HUD Banner -->
+      <section class="kpi-banner">
+        <div class="kpi-card">
+          <div class="kpi-icon cyan"><i class="fa-solid fa-droplet"></i></div>
+          <div class="kpi-info">
+            <span class="kpi-title">DETECTED SPILL AREA</span>
+            <span class="kpi-value text-cyan" id="kpiArea">42.50 km²</span>
+            <span class="kpi-sub" id="kpiVolume">~6,683 bbl (Bonn Code 3)</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon purple"><i class="fa-solid fa-crosshairs"></i></div>
+          <div class="kpi-info">
+            <span class="kpi-title">DETECTION CONFIDENCE</span>
+            <span class="kpi-value text-purple" id="kpiConfidence">94.0%</span>
+            <span class="kpi-sub">Sentinel-1 C-Band SAR U-Net</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon red"><i class="fa-solid fa-ship"></i></div>
+          <div class="kpi-info">
+            <span class="kpi-title">TOP CANDIDATE VESSEL</span>
+            <span class="kpi-value text-red" id="kpiTopVessel">MT PACIFIC GLORY</span>
+            <span class="kpi-sub" id="kpiPriority">Investigation Priority: <strong>91/100</strong></span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon amber"><i class="fa-solid fa-leaf"></i></div>
+          <div class="kpi-info">
+            <span class="kpi-title">ECOLOGICAL RISK</span>
+            <span class="kpi-value text-amber" id="kpiEcoRisk">CRITICAL</span>
+            <span class="kpi-sub" id="kpiSpeciesCount">3 Sensitive Taxa in Drift Buffer</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon orange"><i class="fa-solid fa-water"></i></div>
+          <div class="kpi-info">
+            <span class="kpi-title">72H DRIFT DISTANCE</span>
+            <span class="kpi-value text-orange" id="kpiDrift">32.4 km</span>
+            <span class="kpi-sub" id="kpiEvap">38.5% Evaporative Decay</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 1: EXECUTIVE DASHBOARD -->
+      <div class="tab-pane active" id="dashboard-view">
+        <div class="grid-2-col">
+          <!-- Left Column: Map & Active Incidents -->
+          <div class="dashboard-left">
+            <div class="cyber-panel">
+              <div class="panel-header">
+                <h3><i class="fa-solid fa-map-location text-cyan"></i> Geospatial Maritime Overview</h3>
+                <div class="map-layer-toggles">
+                  <label><input type="checkbox" id="chkSpill" checked onchange="toggleLayer('spill')"> Spills</label>
+                  <label><input type="checkbox" id="chkVessels" checked onchange="toggleLayer('vessels')"> AIS Vessels</label>
+                  <label><input type="checkbox" id="chkDrift" checked onchange="toggleLayer('drift')"> 72h Trajectory</label>
+                  <label><input type="checkbox" id="chkEco" checked onchange="toggleLayer('eco')"> Protected MPAs</label>
+                </div>
+              </div>
+              <div id="mainMap" class="leaflet-map-container"></div>
+            </div>
+
+            <!-- Active Incident Dossier Quick View -->
+            <div class="cyber-panel mt-3">
+              <div class="panel-header">
+                <h3><i class="fa-solid fa-clipboard-list text-purple"></i> Incident Executive Summary</h3>
+                <span class="badge badge-critical" id="incidentSeverityBadge">CRITICAL SEVERITY</span>
+              </div>
+              <div class="panel-body">
+                <p id="incidentSummaryText" class="lead-text">Loading multi-source evidence summary...</p>
+                <div class="response-actions-quick" id="quickResponseContainer"></div>
               </div>
             </div>
-            
-            <div id="leaflet-map"></div>
-            
-            <!-- Bottom Analytical Telemetry Row -->
-            <div class="bottom-row">
-              <div class="card timeline-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                  <h3>Oil Spill Detection Timeline</h3>
-                  <div style="font-size:10px;color:var(--accent-cyan);display:flex;align-items:center;gap:4px;">
-                    <span style="width:12px;height:2px;background:var(--accent-cyan);display:inline-block;"></span> Confidence Score
+          </div>
+
+          <!-- Right Column: Candidate Vessel Ranking & Analytics -->
+          <div class="dashboard-right">
+            <!-- Candidate Vessels Ranking Card -->
+            <div class="cyber-panel">
+              <div class="panel-header">
+                <h3><i class="fa-solid fa-ranking-star text-red"></i> Candidate Vessel Priority Ranking</h3>
+                <span class="badge badge-info">Spatial-Temporal AIS Correlation</span>
+              </div>
+              <div class="panel-body">
+                <div class="candidate-list" id="candidateVesselsList">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Weathering & Drift Curves -->
+            <div class="cyber-panel mt-3">
+              <div class="panel-header">
+                <h3><i class="fa-solid fa-chart-area text-cyan"></i> 72h Weathering: Evaporation vs Emulsification</h3>
+              </div>
+              <div class="panel-body">
+                <div class="chart-container">
+                  <canvas id="weatheringChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIVE GIS FULLSCREEN MAP -->
+      <div class="tab-pane" id="map-view">
+        <div class="cyber-panel full-height">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-earth-americas text-cyan"></i> Interactive Maritime GIS Surveillance Center</h3>
+            <div class="map-controls-hud">
+              <button class="btn btn-sm btn-outline" onclick="resetMapView()"><i class="fa-solid fa-compress"></i> Fit Bounds</button>
+              <button class="btn btn-sm btn-outline" onclick="toggleRiskLayer()"><i class="fa-solid fa-shield"></i> Toggle Risk Corridors</button>
+            </div>
+          </div>
+          <div id="fullGisMap" class="leaflet-map-container-full"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: SAR SPILL DETECTION STUDIO -->
+      <div class="tab-pane" id="detection-view">
+        <div class="grid-2-col">
+          <div class="cyber-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-satellite-dish text-cyan"></i> Sentinel-1 / NOAA SAR Ingestion & U-Net AI</h3>
+            </div>
+            <div class="panel-body">
+              <!-- Upload Area -->
+              <div class="dropzone" id="sarDropzone">
+                <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                <h4>Drag & Drop Sentinel-1 SAR GeoTIFF / PNG or Click to Upload</h4>
+                <p class="text-muted">Supports VV, VH, HH polarizations & NOAA NESDIS raster products</p>
+                <input type="file" id="sarFileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this.files)">
+                <button class="btn btn-primary mt-2" onclick="document.getElementById('sarFileInput').click()">Browse Files</button>
+              </div>
+
+              <!-- Preset Selectors -->
+              <div class="preset-buttons mt-3">
+                <label>Or test benchmark samples:</label>
+                <div class="button-group">
+                  <button class="btn btn-sm btn-outline" onclick="testBenchmarkSample('noaa_gulf_slick_01_001')">NOAA Gulf Slick #1</button>
+                  <button class="btn btn-sm btn-outline" onclick="testBenchmarkSample('sentinel1_mumbai_high_01_003')">Mumbai High Spill</button>
+                  <button class="btn btn-sm btn-outline" onclick="testBenchmarkSample('sar_lookalike_low_wind_01_006')">Calm Sea (Look-alike)</button>
+                </div>
+              </div>
+
+              <!-- Texture & GLCM Haralick Readout -->
+              <div class="hud-box mt-3">
+                <h4><i class="fa-solid fa-microchip text-purple"></i> SAR GLCM Haralick Texture & Damping Analysis</h4>
+                <div class="texture-grid" id="textureGrid">
+                  <div class="texture-item"><span class="label">Homogeneity:</span> <strong id="glcmHomo">0.82</strong></div>
+                  <div class="texture-item"><span class="label">Contrast:</span> <strong id="glcmContrast">0.14</strong></div>
+                  <div class="texture-item"><span class="label">Energy:</span> <strong id="glcmEnergy">0.45</strong></div>
+                  <div class="texture-item"><span class="label">Entropy:</span> <strong id="glcmEntropy">2.18</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Spectral Comparison & Bonn Scale -->
+          <div class="cyber-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-layer-group text-cyan"></i> Spectral Segmentation & Bonn HUD</h3>
+            </div>
+            <div class="panel-body">
+              <div class="image-comparison-wrapper">
+                <div class="img-box">
+                  <span class="img-tag">Raw SAR Backscatter</span>
+                  <img id="rawSarImg" src="" alt="Raw SAR Imagery" class="preview-img">
+                </div>
+                <div class="img-box">
+                  <span class="img-tag">U-Net Segmentation Overlay</span>
+                  <img id="maskSarImg" src="" alt="Segmented Mask" class="preview-img">
+                </div>
+              </div>
+
+              <!-- Bonn Scale Breakdown -->
+              <div class="bonn-hud mt-3" id="bonnHud">
+                <h4><i class="fa-solid fa-ruler-combined text-amber"></i> Bonn Agreement Oil Appearance Classification</h4>
+                <div class="bonn-card">
+                  <div class="bonn-badge" id="bonnBadge">CODE 3</div>
+                  <div class="bonn-details">
+                    <strong id="bonnTitle">Code 3: Metallic Sheen</strong>
+                    <p id="bonnThickness">Nominal Thickness: 25.0 µm | Volume: ~6,683 bbl (~1,062 m³)</p>
                   </div>
                 </div>
-                <canvas id="timeline-canvas" width="600" height="130"></canvas>
-              </div>
-
-              <div class="card stat-card">
-                <h3>Vessel Anomaly Overview</h3>
-                <div class="donut-wrapper">
-                  <canvas id="anomaly-donut" width="120" height="120"></canvas>
-                  <div class="donut-center">128<br><span>Vessels</span></div>
-                </div>
-                <div class="legend">
-                  <span class="dot red"></span> High 17 (13%) &nbsp;
-                  <span class="dot amber"></span> Med 35 (27%) &nbsp;
-                  <span class="dot green"></span> Low 76 (60%)
-                </div>
-              </div>
-
-              <div class="card stat-card">
-                <h3>Oil Spill Statistics (This Month)</h3>
-                <div class="spill-stats">
-                  <div>🔥 Total Spills: <b>05</b></div>
-                  <div>⚠️ Total Area: <b>12.48 km²</b></div>
-                  <div>Avg. Confidence: <b>85%</b></div>
-                  <div>False Alarms: <b>02</b></div>
-                </div>
-              </div>
-
-              <div class="card stat-card">
-                <h3>Risk Level Distribution</h3>
-                <div class="donut-wrapper">
-                  <canvas id="risk-donut" width="120" height="120"></canvas>
-                  <div class="donut-center">68<br><span>Vessels</span></div>
-                </div>
-                <div class="legend">
-                  <span class="dot red"></span> High 7 (10%) &nbsp;
-                  <span class="dot amber"></span> Med 21 (31%) &nbsp;
-                  <span class="dot green"></span> Low 40 (59%)
-                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Right Incident Intelligence Panel -->
-          <aside class="incident-panel">
+      <!-- TAB 4: VESSELS & BEHAVIOR ATTRIBUTION -->
+      <div class="tab-pane" id="vessels-view">
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-ship text-red"></i> AIS Vessel Behavioral Anomaly Analysis & Attribution</h3>
+            <div class="disclaimer-badge">
+              <i class="fa-solid fa-scale-balanced"></i> Investigation Priority Indicator (Non-Culpability Standard)
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="vessels-grid" id="fullVesselDetailsGrid">
+              <!-- Injected via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SPILL TRAJECTORY & WEATHERING -->
+      <div class="tab-pane" id="trajectory-view">
+        <div class="grid-2-col">
+          <div class="cyber-panel">
             <div class="panel-header">
-              <h2>Incident: #INC-2025-05-20-01</h2>
-              <button class="close-btn" onclick="IncidentModule.closeIncident('INC-2025-05-20-01')">&times;</button>
+              <h3><i class="fa-solid fa-wind text-orange"></i> 72-Hour Lagrangian Drift Simulation</h3>
+              <span class="badge badge-warning">Wind + Current + Coriolis</span>
             </div>
-            <div class="panel-tabs">
-              <button class="panel-tab active">Overview</button>
-              <button class="panel-tab" onclick="app.switchTab('vessels')">Vessels (4)</button>
-              <button class="panel-tab" onclick="document.getElementById('btn-satellite').click()">Satellite</button>
-              <button class="panel-tab" onclick="app.switchTab('reports')">Timeline</button>
-              <button class="panel-tab" onclick="app.switchTab('alerts')">Actions</button>
-            </div>
-            <div class="panel-content">
-              <!-- Dynamically populated by incidents.js -->
-            </div>
-          </aside>
-        </div>
-      </div>
-
-      <!-- TAB: AIS FLEET MONITOR -->
-      <div id="tab-vessels" class="tab-content">
-        <div class="page-header">
-          <h2>🚢 AIS Fleet Monitor</h2>
-          <button onclick="AISModule.uploadPrompt()" class="btn-primary btn" style="width:auto;">Upload AIS Feed (CSV)</button>
-        </div>
-        <div class="card">
-          <table class="fleet-table" id="fleet-table">
-            <thead>
-              <tr>
-                <th>MMSI</th><th>Vessel Name</th><th>Type</th><th>Flag</th>
-                <th>Speed</th><th>Heading</th><th>Status</th><th>Anomaly Score</th><th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="fleet-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- TAB: ANOMALY DETECTION -->
-      <div id="tab-anomaly" class="tab-content">
-        <div class="page-header">
-          <h2>🤖 Anomaly Detection Engine</h2>
-          <button onclick="AnomalyModule.runAnalysis()" class="btn-primary btn" style="width:auto;">Run Full Fleet Analysis</button>
-        </div>
-        <div class="anomaly-layout">
-          <div class="card anomaly-list" id="anomaly-fleet-list"></div>
-          <div class="card anomaly-detail" id="anomaly-vessel-detail"><p style="color:var(--text-muted);padding:20px">Select a vessel to view detailed anomaly breakdown.</p></div>
-        </div>
-      </div>
-
-      <!-- TAB: INCIDENTS -->
-      <div id="tab-incidents" class="tab-content">
-        <div class="page-header"><h2>📊 Incident Management</h2></div>
-        <div id="incidents-grid" class="incidents-grid"></div>
-      </div>
-
-      <!-- TAB: ALERTS & RESPONSE -->
-      <div id="tab-alerts" class="tab-content">
-        <div class="page-header"><h2>🚨 Maritime Alerts & Emergency Response</h2></div>
-        <div id="alerts-container">
-          <div style="background:var(--bg-card);border-radius:8px;padding:16px;border:1px solid var(--border-subtle);margin-bottom:12px;border-left:4px solid var(--accent-crimson);">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <b style="color:var(--accent-crimson);">ALERT #ALT-9042: High Confidence Oil Spill Attribution</b>
-              <span class="badge high">IMMEDIATE ACTION</span>
-            </div>
-            <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Vessel MT SHIVALIK (MMSI 419001234) spatiotemporally correlated (91% confidence) with confirmed 4.8 km² crude spill in Sector Bay of Bengal.</p>
-            <div style="margin-top:10px;display:flex;gap:10px;">
-              <button class="btn btn-primary" onclick="app.showNotification('Dispatched alert to Indian Coast Guard HQ', 'success')" style="width:auto;padding:6px 14px;">Dispatch Coast Guard Interceptor</button>
-              <button class="btn btn-outline" onclick="ReportModule.generateReport('INC-2025-05-20-01')" style="width:auto;padding:6px 14px;">View Evidence Report</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB: REPORTS -->
-      <div id="tab-reports" class="tab-content">
-        <div class="page-header"><h2>📄 Formal Incident Investigation Reports</h2></div>
-        <div id="reports-list">
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <b style="font-size:14px;color:#fff;">Incident #INC-2025-05-20-01: Bay of Bengal Crude Spill</b><br>
-                <span style="font-size:11px;color:var(--text-muted);">Attributed Source: MT SHIVALIK (91%) &nbsp;|&nbsp; Affected Area: 4.8 km² &nbsp;|&nbsp; Bonn Code 3</span>
+            <div class="panel-body">
+              <div class="trajectory-table-wrapper">
+                <table class="cyber-table" id="trajectoryTable">
+                  <thead>
+                    <tr>
+                      <th>Forecast Step</th>
+                      <th>Time Interval</th>
+                      <th>Drift Distance</th>
+                      <th>Evaporation</th>
+                      <th>Emulsification</th>
+                      <th>Coastal Alert</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
               </div>
-              <button class="btn btn-primary" onclick="ReportModule.generateReport('INC-2025-05-20-01')" style="width:auto;padding:8px 18px;">Generate Investigation Report</button>
+            </div>
+          </div>
+
+          <div class="cyber-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-chart-line text-cyan"></i> Physical Weathering Decay Curves</h3>
+            </div>
+            <div class="panel-body">
+              <div class="chart-container large">
+                <canvas id="weatheringFullChart"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-    </div>
-  </div>
-</div>
+      <!-- TAB 6: MARINE ECOLOGICAL IMPACT -->
+      <div class="tab-pane" id="ecological-view">
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-leaf text-amber"></i> OBIS Marine Biodiversity & Habitat Vulnerability Assessment</h3>
+            <span class="badge badge-critical" id="ecoRiskLevelBadge">CRITICAL IMPACT POTENTIAL</span>
+          </div>
+          <div class="panel-body">
+            <div class="eco-grid">
+              <div class="eco-species-list" id="ecoSpeciesList">
+                <!-- Species Cards Injected Here -->
+              </div>
+              <div class="eco-mpa-list" id="ecoMpaList">
+                <!-- Protected Habitats Injected Here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<!-- Local Leaflet with CDN Fallback -->
-<script src="/static/js/leaflet.js?v=3.5"></script>
-<script>
-  if (typeof L === 'undefined') {
-    document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
-  }
-</script>
-<script src="/static/js/map.js?v=3.5"></script>
-<script src="/static/js/ais.js?v=3.5"></script>
-<script src="/static/js/anomaly.js?v=3.5"></script>
-<script src="/static/js/incidents.js?v=3.5"></script>
-<script src="/static/js/report.js?v=3.5"></script>
-<script src="/static/js/app.js?v=3.5"></script>
+      <!-- TAB 7: CLIMATE & ENVIRONMENTAL ANALYTICS -->
+      <div class="tab-pane" id="climate-view">
+        <div class="grid-2-col">
+          <div class="cyber-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-temperature-arrow-up text-red"></i> Sea Surface Temperature & Marine Heatwaves</h3>
+            </div>
+            <div class="panel-body">
+              <div class="climate-stats-grid" id="climateStatsGrid">
+                <!-- SST & Anomaly Readout -->
+              </div>
+              <div class="chart-container mt-3">
+                <canvas id="sstTrendChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-compass text-cyan"></i> MetOcean Wind & Surface Current Vectors</h3>
+            </div>
+            <div class="panel-body">
+              <div class="vector-hud" id="vectorHud">
+                <!-- Wind rose & current readouts -->
+              </div>
+              <div class="alert-box mt-3" id="climatologyNoteBox">
+                <!-- Climate context paragraph -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: PRE-INCIDENT MARITIME RISK -->
+      <div class="tab-pane" id="risk-view">
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-shield-halved text-orange"></i> Pre-Incident Shipping Risk Corridors & Density Map</h3>
+            <span class="badge badge-info">Predictive Vulnerability Layer</span>
+          </div>
+          <div class="panel-body">
+            <div class="risk-corridors-list" id="riskCorridorsList">
+              <!-- Injected via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 9: MULTI-SOURCE EVIDENCE FUSION DOSSIER -->
+      <div class="tab-pane" id="dossier-view">
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-file-shield text-cyan"></i> Multi-Pillar Evidence Fusion Dossier</h3>
+            <button class="btn btn-primary btn-sm" onclick="printReport()"><i class="fa-solid fa-print"></i> Export Official Report</button>
+          </div>
+          <div class="panel-body">
+            <div class="pillars-grid" id="pillarsGrid">
+              <!-- 5 Evidence Pillars Injected Here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 10: IMO OFFICIAL INCIDENT REPORT -->
+      <div class="tab-pane" id="reports-view">
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-file-invoice text-purple"></i> International Maritime Organization (IMO) / Bonn Incident Report</h3>
+            <button class="btn btn-primary" onclick="printReport()"><i class="fa-solid fa-download"></i> Download / Print PDF</button>
+          </div>
+          <div class="panel-body">
+            <div class="printable-report" id="printableReport">
+              <!-- Formal Marine Incident Assessment Document -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- MarineGuard App JS -->
+  <script src="/static/js/app.js"></script>
 </body>
 </html>

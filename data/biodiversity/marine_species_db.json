@@ -1,0 +1,114 @@
+{
+  "marine_protected_areas": [
+    {
+      "mpa_id": "MPA_GOM_001",
+      "name": "Flower Garden Banks National Marine Sanctuary",
+      "type": "Coral Reef Sanctuary",
+      "center": {"lat": 27.9100, "lon": -93.6000},
+      "geometry_type": "Polygon",
+      "coordinates": [[
+        [-93.85, 27.80],
+        [-93.40, 27.80],
+        [-93.40, 28.05],
+        [-93.85, 28.05],
+        [-93.85, 27.80]
+      ]],
+      "protection_level": "Strict Marine Reserve (IUCN Ia)",
+      "vulnerability_weight": 0.95
+    },
+    {
+      "mpa_id": "MPA_IND_001",
+      "name": "Malvan Marine Sanctuary & Coral Habitats",
+      "type": "Coral & Mangrove MPA",
+      "center": {"lat": 16.0500, "lon": 73.4700},
+      "geometry_type": "Polygon",
+      "coordinates": [[
+        [73.35, 15.95],
+        [73.55, 15.95],
+        [73.55, 16.15],
+        [73.35, 16.15],
+        [73.35, 15.95]
+      ]],
+      "protection_level": "National Marine Park",
+      "vulnerability_weight": 0.90
+    },
+    {
+      "mpa_id": "MPA_GOM_002",
+      "name": "Breton National Wildlife Refuge (Nesting Islands)",
+      "type": "Coastal Mangrove & Avian Breeding Wetland",
+      "center": {"lat": 29.4500, "lon": -89.1800},
+      "geometry_type": "Polygon",
+      "coordinates": [[
+        [-89.40, 29.30],
+        [-88.95, 29.30],
+        [-88.95, 29.60],
+        [-89.40, 29.60],
+        [-89.40, 29.30]
+      ]],
+      "protection_level": "Critical Wetland Ramsar Site",
+      "vulnerability_weight": 0.98
+    }
+  ],
+  "obis_species_records": [
+    {
+      "species_id": "SP_001",
+      "scientific_name": "Lepidochelys kempii",
+      "common_name": "Kemp's Ridley Sea Turtle",
+      "taxon_group": "Reptilia (Marine Turtles)",
+      "iucn_status": "Critically Endangered (CR)",
+      "vulnerability_score": 0.95,
+      "typical_depth_m": "0 - 50m (Surface feeder / nesting)",
+      "oil_sensitivity_factors": "Inhalation of toxic petroleum vapors, ingestion of oil tarballs, egg fouling",
+      "region": "Gulf of Mexico",
+      "recorded_locations": [
+        {"lat": 28.7500, "lon": -88.4200, "count": 14, "obs_date": "2026-08-10"},
+        {"lat": 28.8200, "lon": -88.3500, "count": 8, "obs_date": "2026-08-12"},
+        {"lat": 28.6800, "lon": -88.5000, "count": 19, "obs_date": "2026-08-13"}
+      ]
+    },
+    {
+      "species_id": "SP_002",
+      "scientific_name": "Physeter macrocephalus",
+      "common_name": "Sperm Whale (Northern GOM Stock)",
+      "taxon_group": "Cetacea (Marine Mammal)",
+      "iucn_status": "Vulnerable (VU)",
+      "vulnerability_score": 0.85,
+      "typical_depth_m": "Deepwater (>500m) surface breathing",
+      "oil_sensitivity_factors": "Blowhole inhalation of volatile aromatic hydrocarbons, acoustic disruption",
+      "region": "Gulf of Mexico",
+      "recorded_locations": [
+        {"lat": 28.6500, "lon": -88.2800, "count": 5, "obs_date": "2026-08-11"},
+        {"lat": 28.7800, "lon": -88.2200, "count": 3, "obs_date": "2026-08-14"}
+      ]
+    },
+    {
+      "species_id": "SP_003",
+      "scientific_name": "Thunnus thynnus",
+      "common_name": "Atlantic Bluefin Tuna (Larval Spawning Area)",
+      "taxon_group": "Actinopterygii (Pelagic Fish)",
+      "iucn_status": "Endangered (EN)",
+      "vulnerability_score": 0.90,
+      "typical_depth_m": "0 - 100m (Larval pelagic zone)",
+      "oil_sensitivity_factors": "Cardiac toxicity in fish embryos, PAH bioaccumulation in food web",
+      "region": "Gulf of Mexico",
+      "recorded_locations": [
+        {"lat": 28.7100, "lon": -88.4000, "count": 120, "obs_date": "2026-08-08"}
+      ]
+    },
+    {
+      "species_id": "SP_004",
+      "scientific_name": "Sousa chinensis",
+      "common_name": "Indo-Pacific Humpback Dolphin",
+      "taxon_group": "Cetacea (Coastal Mammal)",
+      "iucn_status": "Vulnerable (VU)",
+      "vulnerability_score": 0.88,
+      "typical_depth_m": "0 - 30m (Coastal / Estuarine)",
+      "oil_sensitivity_factors": "Skin lesions, respiratory distress, acoustic interference",
+      "region": "Arabian Sea",
+      "recorded_locations": [
+        {"lat": 19.3500, "lon": 71.4500, "count": 12, "obs_date": "2026-08-18"},
+        {"lat": 19.4500, "lon": 71.3000, "count": 7, "obs_date": "2026-08-19"}
+      ]
+    }
+  ]
+}

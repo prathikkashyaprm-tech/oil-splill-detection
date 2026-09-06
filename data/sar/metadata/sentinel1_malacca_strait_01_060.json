@@ -1,0 +1,12 @@
+{
+  "sample_id": "sentinel1_malacca_strait_01_060",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "oil_spill",
+  "latitude": 2.362554683760367,
+  "longitude": 101.835378873121,
+  "estimated_area_km2": 31.4,
+  "wind_speed_ms": 4.5,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": true
+}

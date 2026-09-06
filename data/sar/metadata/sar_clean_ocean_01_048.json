@@ -1,0 +1,12 @@
+{
+  "sample_id": "sar_clean_ocean_01_048",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "clean_sea",
+  "latitude": 12.565725312052828,
+  "longitude": 80.49642286144432,
+  "estimated_area_km2": 0.0,
+  "wind_speed_ms": 7.5,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": false
+}

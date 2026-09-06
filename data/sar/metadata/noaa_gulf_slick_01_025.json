@@ -1,0 +1,12 @@
+{
+  "sample_id": "noaa_gulf_slick_01_025",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "oil_spill",
+  "latitude": 28.816509582353866,
+  "longitude": -88.40170619097962,
+  "estimated_area_km2": 42.5,
+  "wind_speed_ms": 4.2,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": true
+}

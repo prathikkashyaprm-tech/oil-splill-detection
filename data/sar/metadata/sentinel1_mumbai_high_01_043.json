@@ -1,0 +1,12 @@
+{
+  "sample_id": "sentinel1_mumbai_high_01_043",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "oil_spill",
+  "latitude": 19.42446757755178,
+  "longitude": 71.33089800150975,
+  "estimated_area_km2": 65.0,
+  "wind_speed_ms": 3.8,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": true
+}

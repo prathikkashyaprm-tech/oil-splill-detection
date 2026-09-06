@@ -1,0 +1,12 @@
+{
+  "sample_id": "sar_lookalike_low_wind_01_006",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "lookalike_calm_water",
+  "latitude": 15.133167968989833,
+  "longitude": 73.11502385511201,
+  "estimated_area_km2": 0.0,
+  "wind_speed_ms": 1.1,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": false
+}

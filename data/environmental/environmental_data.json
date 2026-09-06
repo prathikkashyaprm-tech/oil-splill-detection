@@ -1,0 +1,74 @@
+{
+  "environmental_presets": {
+    "gulf_of_mexico": {
+      "region_name": "Northern Gulf of Mexico (Mississippi Canyon)",
+      "coordinates": {"lat": 28.7350, "lon": -88.3820},
+      "sea_surface_temp_c": 29.8,
+      "sst_climatological_mean_c": 28.4,
+      "sst_anomaly_c": 1.4,
+      "marine_heatwave_status": "Category II (Strong Marine Heatwave)",
+      "wind": {
+        "speed_knots": 11.5,
+        "speed_ms": 5.9,
+        "direction_deg": 135.0,
+        "gust_knots": 15.0,
+        "cardinal": "SE"
+      },
+      "ocean_current": {
+        "velocity_knots": 0.95,
+        "velocity_ms": 0.49,
+        "direction_deg": 310.0,
+        "current_name": "Loop Current Eddy (Northern Fringe)"
+      },
+      "wave": {
+        "significant_height_m": 1.1,
+        "peak_period_s": 5.5,
+        "direction_deg": 140.0
+      },
+      "chlorophyll_a_mg_m3": 1.45,
+      "salinity_psu": 35.8,
+      "turbidity_ntu": 2.1,
+      "historical_spill_frequency": "Medium-High (Petrochemical Hub)",
+      "weathering_factors": {
+        "expected_evaporative_decay_24h_pct": 38.5,
+        "expected_emulsification_water_pct": 52.0,
+        "viscosity_increase_factor": 8.4
+      }
+    },
+    "mumbai_high": {
+      "region_name": "Arabian Sea (Mumbai Offshore Oil Field)",
+      "coordinates": {"lat": 19.4200, "lon": 71.3300},
+      "sea_surface_temp_c": 28.6,
+      "sst_climatological_mean_c": 27.9,
+      "sst_anomaly_c": 0.7,
+      "marine_heatwave_status": "Category I (Moderate)",
+      "wind": {
+        "speed_knots": 14.0,
+        "speed_ms": 7.2,
+        "direction_deg": 245.0,
+        "gust_knots": 18.0,
+        "cardinal": "WSW (Southwest Monsoon)"
+      },
+      "ocean_current": {
+        "velocity_knots": 1.2,
+        "velocity_ms": 0.62,
+        "direction_deg": 70.0,
+        "current_name": "West India Coastal Current (WICC)"
+      },
+      "wave": {
+        "significant_height_m": 1.8,
+        "peak_period_s": 7.0,
+        "direction_deg": 240.0
+      },
+      "chlorophyll_a_mg_m3": 2.8,
+      "salinity_psu": 36.2,
+      "turbidity_ntu": 3.8,
+      "historical_spill_frequency": "Moderate (Offshore Extraction)",
+      "weathering_factors": {
+        "expected_evaporative_decay_24h_pct": 42.0,
+        "expected_emulsification_water_pct": 65.0,
+        "viscosity_increase_factor": 12.0
+      }
+    }
+  }
+}

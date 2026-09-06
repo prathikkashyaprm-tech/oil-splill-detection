@@ -49,8 +49,8 @@ const MapModule = {
       // Zoom control on top-right
       L.control.zoom({ position: 'topright' }).addTo(this.map);
 
-      // Dark Basemap (CartoDB Dark Matter)
-      this.darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      // Dark Basemap (CartoDB Dark Matter - fixed template without undefined {r})
+      this.darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
         subdomains: 'abcd',
         maxZoom: 19,
         opacity: 0.95
@@ -80,13 +80,20 @@ const MapModule = {
       this.renderScaleBar();
       this.bindLayerControls();
 
-      // Ensure proper layout computation
-      setTimeout(() => {
-        if (this.map) this.map.invalidateSize();
-      }, 100);
-      setTimeout(() => {
-        if (this.map) this.map.invalidateSize();
-      }, 400);
+      // Setup ResizeObserver for robust layout computation
+      if (window.ResizeObserver) {
+        const resizeObserver = new ResizeObserver(() => {
+          if (this.map) this.map.invalidateSize();
+        });
+        resizeObserver.observe(mapEl);
+      }
+
+      // Staggered size invalidation on initialization
+      [50, 150, 400, 800].forEach(delay => {
+        setTimeout(() => {
+          if (this.map) this.map.invalidateSize();
+        }, delay);
+      });
 
       console.log('✓ MarineGuard Live Map initialized successfully');
     } catch(err) {
@@ -138,22 +145,24 @@ const MapModule = {
 
     // 2. Interactive Layer Checkboxes
     const toggleConfig = [
-      { id: 'layer-vessels', layer: this.layers.vessels },
-      { id: 'layer-spills', layer: this.layers.spills },
-      { id: 'layer-weather', layer: this.layers.weather },
-      { id: 'layer-coastline', layer: this.layers.coastline },
-      { id: 'layer-ports', layer: this.layers.ports }
+      { id: 'layer-vessels', layers: [this.layers.vessels, this.layers.tracks] },
+      { id: 'layer-spills', layers: [this.layers.spills] },
+      { id: 'layer-weather', layers: [this.layers.weather] },
+      { id: 'layer-coastline', layers: [this.layers.coastline] },
+      { id: 'layer-ports', layers: [this.layers.ports] }
     ];
 
     toggleConfig.forEach(cfg => {
       const cb = document.getElementById(cfg.id);
       if (cb) {
         cb.onchange = (e) => {
-          if (e.target.checked) {
-            if (!this.map.hasLayer(cfg.layer)) this.map.addLayer(cfg.layer);
-          } else {
-            if (this.map.hasLayer(cfg.layer)) this.map.removeLayer(cfg.layer);
-          }
+          cfg.layers.forEach(layer => {
+            if (e.target.checked) {
+              if (!this.map.hasLayer(layer)) this.map.addLayer(layer);
+            } else {
+              if (this.map.hasLayer(layer)) this.map.removeLayer(layer);
+            }
+          });
         };
       }
     });
@@ -436,8 +445,8 @@ const MapModule = {
   },
 
   focusIncident(incident) {
-    if (this.map && incident.lat && incident.lon) {
-      this.map.flyTo([incident.lat + 0.1, incident.lon + 0.1], 9, { duration: 1.2 });
+    if (this.map && incident && incident.lat && incident.lon) {
+      this.map.flyTo([incident.lat, incident.lon], 9, { duration: 1.2 });
     }
   }
 };

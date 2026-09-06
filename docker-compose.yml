@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgis_db:
+    image: postgis/postgis:15-3.3
+    container_name: marineguard_postgis
+    environment:
+      POSTGRES_DB: marineguard
+      POSTGRES_USER: marineguard_user
+      POSTGRES_PASSWORD: marineguard_secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marineguard_user -d marineguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: marineguard_backend
+    environment:
+      - DATABASE_URL=postgresql://marineguard_user:marineguard_secure_password@postgis_db:5432/marineguard
+      - UNET_MODEL_PATH=models/unet_sar_oilspill.pth
+      - DEMO_MODE=True
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgis_db:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    restart: unless-stopped
+
+volumes:
+  postgis_data:

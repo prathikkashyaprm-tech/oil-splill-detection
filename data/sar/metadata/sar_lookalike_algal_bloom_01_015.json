@@ -1,0 +1,12 @@
+{
+  "sample_id": "sar_lookalike_algal_bloom_01_015",
+  "source": "NOAA-NESDIS / Sentinel-1 SAR",
+  "type": "lookalike_algal_bloom",
+  "latitude": 20.98656959764153,
+  "longitude": 89.16234433330509,
+  "estimated_area_km2": 0.0,
+  "wind_speed_ms": 3.2,
+  "polarization": "VV",
+  "resolution_m": 10.0,
+  "has_spill": false
+}
